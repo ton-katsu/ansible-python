@@ -1,2 +1,17 @@
 ---
 # tasks file for python (CentOS specific)
+
+- name: Install yum-utils
+  yum: name=yum-utils state=present update_cache=yes
+  tags: python
+
+- name: Check Python dependencies
+  command: yum-builddep python --assumeno
+  register: check_python_dependencies
+  ignore_errors: true
+  changed_when: false
+
+- name: Install Python dependencies
+  command: yum-builddep python -y
+  tags: python
+  when: check_python_dependencies.rc != 0
